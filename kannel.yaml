@@ -1,0 +1,32 @@
+---
+- name: kannel Installation  
+  hosts: all
+  tasks:
+          - name: Install a list of packages with a list variable
+            yum:
+              name: "{{ packages }}"
+            vars:
+              packages:
+                - "@Development Tools"
+                - svn
+                - "*xml*"
+                - mysql-devel
+            
+          - name: download and compile kannel
+            shell: 
+                 svn  --trust-server-cert --non-interactive co https://svn.kannel.org/gateway/trunk
+            shell:
+                 cd /root/trunk/ && ./bootstrap.sh && ./configure --with-mysql && make && make install
+
+
+          - name: Creates directory
+            file:
+             path: /kannel
+             state: directory
+          - name: copy file from local host ti local host
+            copy:
+              src: /usr/local/sbin/bearerbox
+              dest: /kannel
+            copy:
+              src: /usr/local/sbin/smsbox
+              dest: /kannel
