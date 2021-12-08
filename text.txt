@@ -1,0 +1,18 @@
+    1  apt install
+    2  sudo apt install wget -y
+    3  wget https://dev.mysql.com/get/mysql-apt-config_0.8.12-1_all.deb
+    4  sudo dpkg -i mysql-apt-config_0.8.12-1_all.deb
+    5  iptables _F
+    6  iptables -F
+    7  apt-get update
+    8  apt-cache policy mysql-server
+    9  apt install -f mysql-client=5.7* mysql-community-server=5.7* mysql-server=5.7*
+   10  mysql_secure_installation
+   11  ufw status
+   12  vim /etc/mysql/my.cnf
+   13  vim /etc/mysql/mysql.conf.d/mysqld.cnf
+   14  hostname
+   15  vim /etc/mysql/mysql.conf.d/mysqld.cnf
+   16  systemctl restart mysql
+   17  mysql -u root -pRedhat@123
+
