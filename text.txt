@@ -40,4 +40,9 @@
    
    
    
+   ++++++++++++++++++++++++++++++++
+   
+   Now, if you know InnoDB, when there is no PK defined, InnoDB will use the first NOT NULL UNIQUE KEY as PK. How will Group Replication handle that ?
+Let’s verify:
+   
 
