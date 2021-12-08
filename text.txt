@@ -21,4 +21,23 @@
    57  a2enconf phpmyadmin
    58  service apache2 restart
    59  curl 127.0.0.1/phpmyadmin
+   
+   ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+   SET SQL_LOG_BIN=0;
+   CREATE USER replica@'%' IDENTIFIED BY 'Redhat@123';
+   GRANT REPLICATION SLAVE ON *.* TO replica@'%';
+   FLUSH PRIVILEGES;
+   SET SQL_LOG_BIN=1;
+   CHANGE MASTER TO MASTER_USER='replica', MASTER_PASSWORD='Redhat@123' FOR CHANNEL 'group_replication_recovery';
+   SET GLOBAL group_replication_bootstrap_group=ON;   #only for first
+   START GROUP_REPLICATION;
+   SET GLOBAL group_replication_bootstrap_group=ON; #only for first
+    SELECT * FROM performance_schema.replication_group_members;
+   
+   ________________________
+   
+   SET GLOBAL read_only = OFF;
+   
+   
+   
 
