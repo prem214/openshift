@@ -15,4 +15,10 @@
    15  vim /etc/mysql/mysql.conf.d/mysqld.cnf
    16  systemctl restart mysql
    17  mysql -u root -pRedhat@123
+   54  apt install phpmyadmin
+   55  curl 127.0.0.1/phpmyadmin
+   56  cp /etc/phpmyadmin/apache.conf /etc/apache2/conf-available/phpmyadmin.conf
+   57  a2enconf phpmyadmin
+   58  service apache2 restart
+   59  curl 127.0.0.1/phpmyadmin
 
