@@ -1,0 +1,87 @@
+---
+- hosts: self
+  remote_user: alxuser
+  become: yes
+
+  tasks:
+    - name: Update the /etc/hosts file with node name
+      tags: etchostsupdate
+      lineinfile:
+        path: "/etc/hosts"
+        regexp: ".*\t{{ hostvars[item]['ansible_hostname']}}\t{{ hostvars[item]['ansible_hostname']}}"
+        line: "{{ item }}\t{{ hostvars[item]['ansible_hostname']}}\t{{ hostvars[item]['ansible_hostname']}}"
+        state: present
+        backup: yes
+      register: etchostsupdate
+      when: ansible_hostname != "{{ item }}" or ansible_hostname == "{{ item }}"
+      with_items: "{{groups['self']}}"
+
+    - name: Starting Mysql Installation Tasks.
+      apt:
+        name: mysql-client
+        state: present
+
+      apt:
+        name: mysql-server
+        state: present
+
+
+    - name: Make sure mysqld service is running
+      service:
+        name: mysql
+        state: started
+        enabled: True
+
+    - name: debconf for pma
+      debconf: name=phpmyadmin question='phpmyadmin/dbconfig-install' value='flase' vtype='boolean'
+    - name: install pma
+      apt: pkg=phpmyadmin state=present
+
+    - name: configure site
+      file: path=/var/www/phpmyadmin src=/usr/share/phpmyadmin state=link
+
+    - name: change phpmyadmin directory
+      shell: cp -rf /usr/share/phpmyadmin /var/www/html/.
+
+
+    - name: Change the authentication plugin of MySQL root user to mysql_native_password
+      ##      shell: mysql -u root -pTemp@9971 -e 'UPDATE mysql.user SET plugin="mysql_native_password" WHERE user="root" AND host="localhost"'
+      shell: mysql -u root  -e 'UPDATE mysql.user SET plugin="mysql_native_password" WHERE user="root" AND host="localhost"'
+
+
+    - name: Flush Privileges
+      ##      shell: mysql -u root -pTemp@9971 -e 'FLUSH PRIVILEGES'
+      shell: mysql -u root  -e 'FLUSH PRIVILEGES'
+
+
+    - name: Set MySQL root password
+      mysql_user:
+          login_host: 'localhost'
+          login_user: 'root'
+          ##          login_password: 'Temp@9971'
+          login_password: ''
+          name: 'root'
+          password: 'Temp@7771'
+          state: present
+
+
+    - name: update my.cnf
+      copy:
+          src: /root/mysqld.cnf
+          dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+          force: yes
+          backup: yes
+
+
+    - name: update group_replication_local_address to my.cnf
+      lineinfile:
+             path: "/etc/mysql/mysql.conf.d/mysqld.cnf"
+             regexp: ".*\t{{ hostvars[item]['ansible_hostname']}}\t{{ hostvars[item]['ansible_hostname']}}"
+             line: "group_replication_local_address={{ item }}:33061"
+             state: present
+             backup: yes
+      register: etchostsupdate
+      when: ansible_hostname != "{{ item }}" or ansible_hostname == "{{ item }}"
+      with_items: "{{groups['self']}}"
+
+
