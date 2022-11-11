@@ -1,0 +1,6 @@
+apt install "@Development Tools" svn "*xml* mysql-devel
+svn  --trust-server-cert --non-interactive co https://svn.kannel.org/gateway/trunk
+cd /root/trunk/ && ./bootstrap.sh && ./configure --with-mysql && make && make install
+mkdir /kannel
+copy /usr/local/sbin/bearerbox /kannel/.
+copy /usr/local/sbin/smsbox /kannel/.
